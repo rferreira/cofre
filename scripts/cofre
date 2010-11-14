@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+"""
+
+Command line driver for the scanii worker agent
+Workers are broken up into processses and restarted if they fail
+
+"""
+from __future__ import absolute_import
+import sys, os.path, logging, optparse, time, os
+from cofre import core
+
+log = logging.getLogger('cofre')
+
+__version__='0.1'
+LOG_FORMAT = '[%(asctime)s] [%(name)s] %(levelname)s: %(message)s'
+
+DEFAULT_CONFIG = """
+[cofre]
+store = $HOME/.cofre/cofre.db
+key = $HOME/.ssh/id_rsa
+engine = sqlite
+"""
+    
+
+def main():
+    if len(sys.argv) == 1:
+        sys.argv.append('-h')
+    
+    parser = optparse.OptionParser(version=__version__, usage='usage: %prog [options] command name')
+    
+    parser.add_option("-c","--config", dest="config", help="config file location", action="store", default=None)
+    parser.add_option("-v","--verbose", dest="verbose", help="runs in verbose mode", action="store_true", default=False)
+    parser.add_option("-i","--init", dest="init", help="initializes the cofre password database", action="store_true", default=False)
+    
+    (options,args) = parser.parse_args()
+    
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(LOG_FORMAT,datefmt='%m/%d/%Y %H:%M:%S')
+    handler.setFormatter(formatter)     
+    log.addHandler(handler)
+    log.setLevel(logging.ERROR)
+    
+    if options.verbose:
+        log.setLevel(logging.DEBUG)        
+                
+    log.debug('running in debug mode')
+    
+    if options.config is None:
+        home = os.getenv('USERPROFILE') or os.getenv('HOME')
+        options.config = os.path.join(home,'.cofre','cofre.cfg')
+        log.debug('using config %s' % options.config)
+        
+    if options.init:
+        print('initializing config: %s' % options.config)
+        os.makedirs(os.path.dirname(options.config))
+        with open(options.config,'w+') as f:
+            f.write(DEFAULT_CONFIG.replace('$HOME', home))            
+        sys.exit(1)
+        
+    if not os.path.exists(options.config):
+        print('config file %s does not exist, try "cofre --init" to initialize it' % options.config)
+        sys.exit(1)
+        
+    log.debug('args: %s' % str(args))
+    cofre = core.Cofre(options.config)        
+    cofre.parse(args)
+    
+                 
+if __name__ == '__main__':
+    main()
+

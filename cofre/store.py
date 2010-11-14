@@ -13,7 +13,11 @@ import logging
 import time
 import uuid
 
+import cofre.core
+from cofre.errors import *
+
 log = logging.getLogger(__name__)
+
 
 class SQLStore:
     
@@ -27,18 +31,51 @@ class SQLStore:
         except sqlite3.OperationalError:
             pass
     
+    def list(self):
+        cursor = self.c.cursor()
+        results = []
+        cursor.execute('SELECT id,key,value FROM store ')        
+
+        for r in cursor:
+            record = cofre.core.Record(r[0])
+            record.name = r[1]
+            record.creds = r[2]
+            
+            results.append(record)
+            
+        return results
 
     def get(self,k):
         cursor = self.c.cursor()
-        cursor.execute('select value from store where key=?', [k] )        
+        results = []
+        cursor.execute('SELECT id,key,value FROM store WHERE key GLOB ?', [ '*' + k + '*'] )        
 
         for r in cursor:
-            return r
+            record = cofre.core.Record(r[0])
+            record.name = r[1]
+            record.creds = r[2]
             
-        return None
+            results.append(record)
+            
+        return results
     
-    def put(self,k,v):        
-        self.c.execute( 'insert into store values(?,?,?,?)', ( str(uuid.uuid4()), k, v, time.time() ))
+    def put(self,k,v, identifier=None):
+        
+        if identifier is None:
+            identifier = str(uuid.uuid4())
+            
+        
+        cursor = self.c.cursor()
+        cursor.execute("""select * from store where key == ? """, [k])
+
+        if len(cursor.fetchall()) > 0:
+            raise DuplicateRecord('record with name %s already exist' % k)
+              
+        self.c.execute( 'insert into store values(?,?,?,?)', (identifier, k, v, time.time() ))
+        self.c.commit()
+        
+    def delete(self,name):        
+        self.c.execute("""DELETE FROM store WHERE key == ? """, [name])
         self.c.commit()
         
         
