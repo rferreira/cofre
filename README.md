@@ -80,9 +80,9 @@ and can import json back:
 	importing entries from /tmp/export.txt
 	1 records successfully imported.
 			
-## Troubleshooting:
+### Troubleshooting:
 
-####  Issues with m2crypto.
+####  Issues with m2crypto
 
 M2Crypto is a library used for the RSA encryption and it prob will not install cleanly via pip (crap, I know). I suggest either using your platform package manager or downloading it directly from http://chandlerproject.org/bin/view/Projects/MeTooCrypto
 
