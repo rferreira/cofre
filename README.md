@@ -1,7 +1,7 @@
 # Cofre - the serendipitous password manager
 
 ## What makes cofre different:
-* You don't need another password (it uses your SSH keys)
+* You don't need another password - it uses your SSH keys!
 * You can store anything in it, username/password combinations, ssn, etc...
 * Pretty much everything is encrypted using RSA keys
 
