@@ -50,7 +50,16 @@ class Record:
         self.creds = ss.encrypt(self.creds)
 
 class Cofre:
-    commands = ['put', 'get', 'list', 'del', 'export', 'import']
+    #commands = ['put', 'get', 'list', 'del', 'export', 'import']
+    
+    commands = {
+        'put':'creates a new record, example: put mybank.com user:12323kd',
+        'get':'retries records using fuzzy logic, example: get mybank',
+        'list':'lists all managed credentials',
+        'del':'deletes a record, example: del mybank.com',
+        'export':'json exports the password database',
+        'import':'loads a json export, example: import file.txt',
+    }
     
     def __init__(self, config_file):            
         self.config = ConfigParser.ConfigParser()
@@ -115,8 +124,8 @@ class Cofre:
         
         command = args[0]
         
-        if command not in self.commands:
-            raise Exception('invalid command: %s' % command)
+        if command not in self.commands.keys():
+            raise Error('invalid command: %s' % command)
             
         log.debug('loading private key')
         ss.load(self.config.get('cofre','key'))

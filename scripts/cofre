@@ -6,12 +6,13 @@ Workers are broken up into processses and restarted if they fail
 
 """
 from __future__ import absolute_import
-import sys, os.path, logging, optparse, time, os
+import sys, os.path, logging, optparse, time, os, sys
 from cofre import core
+from cofre import errors
+from cofre import __version__ as ver
 
 log = logging.getLogger('cofre')
 
-__version__='0.1'
 LOG_FORMAT = '[%(asctime)s] [%(name)s] %(levelname)s: %(message)s'
 
 DEFAULT_CONFIG = """
@@ -20,16 +21,15 @@ store = $HOME/.cofre/cofre.db
 key = $HOME/.ssh/id_rsa
 engine = sqlite
 """
-    
 
 def main():
     if len(sys.argv) == 1:
         sys.argv.append('-h')
-    
-    parser = optparse.OptionParser(version=__version__, usage='usage: %prog [options] command name')
+            
+    parser = optparse.OptionParser(version='%prog ' + ver, usage='%prog [options] command', description='the serendipitous password manager.', epilog="See 'cofre commands' for available commands")
     
     parser.add_option("-c","--config", dest="config", help="config file location", action="store", default=None)
-    parser.add_option("-v","--verbose", dest="verbose", help="runs in verbose mode", action="store_true", default=False)
+    parser.add_option("-v","--verbose", dest="verbose", help="runs in verbose mode", action="store_true", default=False)    
     parser.add_option("-i","--init", dest="init", help="initializes the cofre password database", action="store_true", default=False)
     
     (options,args) = parser.parse_args()
@@ -62,9 +62,20 @@ def main():
         sys.exit(1)
         
     log.debug('args: %s' % str(args))
-    cofre = core.Cofre(options.config)        
-    cofre.parse(args)
     
+    if len(args) == 1 and args[0] == 'commands':
+        print('available commands:')
+        for k,v in core.Cofre.commands.items():
+            print('  %-10s %s' % (k,v))
+            
+        sys.exit(0)
+          
+    try:
+        cofre = core.Cofre(options.config)        
+        cofre.parse(args)
+    except errors.Error,v:
+        log.debug(v)
+        print('error %s' % v)
                  
 if __name__ == '__main__':
     main()
