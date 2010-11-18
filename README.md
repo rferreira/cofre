@@ -7,7 +7,7 @@
 
 ## Cofre Primer:
 
-### first we get it installed:
+#### first we get it installed:
 
 	$ sudo pip install cofre
 	
@@ -16,7 +16,7 @@
 	$ cofre --init
 	initializing config: /home/rafael/.cofre/cofre.cfg
 	
-### now we can start storing secrets:
+#### now we can start storing secrets:
 
 	$ cofre put mysite.com raf@ophion.org:mypassword
 	created a new record for [mysite.com] with creds: [raf@ophion.org:mypassword]
@@ -28,7 +28,7 @@ cofre can also auto generate a password for you:
 
 *note that all we had to do was end the credentials with a ':'*
 
-### looking something up is also simple:
+#### looking something up is also simple:
 
 	$ cofre get bank
 	results:
@@ -40,7 +40,7 @@ cofre can also auto generate a password for you:
 
 cofre performs fuzzy searches so it will returns the record(s) that closest match what you asked for
 
-### viewing all entries in the database:
+#### viewing all entries in the database:
 
 	$ cofre list
 	results:
@@ -51,12 +51,12 @@ cofre performs fuzzy searches so it will returns the record(s) that closest matc
 	| b634a168 | mybank     | raf@ophion.org:3QZ8YKaU6x |
 	+----------+------------+---------------------------+
 
-### deleting a record from the database:
+#### deleting a record from the database:
 
 	$ cofre del mybank
 	record deleted.
 
-### export & import:
+#### export & import:
 
 cofre exports its database as unencrypted json:
 	
