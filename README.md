@@ -1,4 +1,4 @@
-## Cofre is a simple tool for managing passwords
+# Cofre is a simple tool for managing passwords
 
 # What makes cofre serendipitous:
 * You don't need another password (it uses your SSH keys)
