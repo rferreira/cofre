@@ -38,7 +38,7 @@ cofre can also auto generate a password for you:
 	| b634a168 | mybank | raf@ophion.org:3QZ8YKaU6x |
 	+----------+--------+---------------------------+
 
-cofre performs fuzzy searches so it will returns the record(s) that closest match what you types
+cofre performs fuzzy searches so it will returns the record(s) that closest match what you asked for
 
 ### viewing all entries in the database:
 
