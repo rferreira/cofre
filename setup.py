@@ -15,7 +15,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         "Topic :: Utilities",
-        'License :: OSI Approved :: Apple Public Source License'
+        'License :: OSI Approved :: Apache Software License'
     ],
     install_requires=['M2Crypto','prettytable'],
     scripts=['scripts/cofre']
