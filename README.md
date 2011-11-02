@@ -40,7 +40,7 @@ cofre can also auto generate a password for you:
 
 cofre performs fuzzy searches so it will returns the record(s) that closest match what you asked for
 
-### there's even a shortcut to copy the password to the clipboard:
+#### quick copy password result into the system clipboard:
 
 	$ cofre -q get bank
 	results:
