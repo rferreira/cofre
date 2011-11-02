@@ -119,6 +119,7 @@ class Cofre:
                 log.debug('copying password to clip')
                 cmd = 'echo %s | %s' % (password, self.config.get('cofre','clipboard'))                
                 subprocess.call(cmd, shell=True)
+                print('password is ready to be pasted.')
                 
 
 
