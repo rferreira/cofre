@@ -40,6 +40,17 @@ cofre can also auto generate a password for you:
 
 cofre performs fuzzy searches so it will returns the record(s) that closest match what you asked for
 
+### there's even a shortcut to copy the password to the clipboard:
+
+	$ cofre -q get bank
+	results:
+	+----------+--------+---------------------------+
+	|    id    |  name  |           creds           |
+	+----------+--------+---------------------------+
+	| b634a168 | mybank | raf@ophion.org:3QZ8YKaU6x |
+	+----------+--------+---------------------------+
+	password is ready to be pasted.
+
 #### viewing all entries in the database:
 
 	$ cofre list
