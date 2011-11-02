@@ -74,7 +74,14 @@ class SQLStore:
         self.c.execute( 'insert into store values(?,?,?,?)', (identifier, k, v, time.time() ))
         self.c.commit()
         
-    def delete(self,name):        
+    def delete(self,name): 
+        results = self.get(name)
+        if len(results) > 1:
+             raise Error('more than 1 record matches search pattern, not sure which one to delete')
+
+        if len(results) == 0:
+             raise Error('could not find any records that match your search pattern')
+        
         self.c.execute("""DELETE FROM store WHERE key == ? """, [name])
         self.c.commit()
         
