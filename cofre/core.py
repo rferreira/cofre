@@ -14,6 +14,7 @@ from random import choice
 from datetime import datetime
 import hashlib
 import json
+import subprocess
 import prettytable
 
 from cofre import __version__ as version
@@ -50,27 +51,28 @@ class Record:
         self.creds = ss.encrypt(self.creds)
 
 class Cofre:
-    #commands = ['put', 'get', 'list', 'del', 'export', 'import']
-    
+        
     commands = {
         'put':'creates a new record, example: put mybank.com user:12323kd',
         'get':'retries records using fuzzy logic, example: get mybank',
         'list':'lists all managed credentials',
         'del':'deletes a record, example: del mybank.com',
         'export':'json exports the password database',
-        'import':'loads a json export, example: import file.txt',
+        'import':'loads a json export, example: import file.txt',        
     }
     
-    def __init__(self, config_file):            
+    def __init__(self, settings):
+        log.debug(settings)        
         self.config = ConfigParser.ConfigParser()
-        log.debug('parsing config file %s ' % config_file)
-        self.config.read(config_file)    
+        log.debug('parsing config file %s ' % settings['config'])
+        self.config.read(settings['config'])    
         log.debug(self.config)
         log.info('using store: %s' % self.config.get('cofre','store'))
         log.info('using engine: %s' % self.config.get('cofre','engine'))
         log.info('using key: %s' % self.config.get('cofre','key'))
-        self.store = cofre.store.SQLStore(self.config)
-        
+        self.store = cofre.store.SQLStore(self.config)      
+        self.settings = settings  
+
     def list(self):
         results = self.store.list()
         for r in results:
@@ -101,12 +103,25 @@ class Cofre:
         x.sortby = 'name'
         x.set_field_align('name', 'l')
         x.set_field_align('creds', 'l')
-        
-        for r in results:                        
+
+                
+        for r in results:               
             x.add_row( [ r.id[:8], r.name, r.creds ] )
 
         print('results:')    
         print(x)             
+
+
+        # are we running in quick mode? if so copy the single result to the clipboard
+        if self.settings.get('quick', False) is True:
+            if len(results) == 1:
+                username, password = results[0].creds.split(':')
+                log.debug('copying password to clip')
+                cmd = 'echo %s | %s' % (password, self.config.get('cofre','clipboard'))                
+                subprocess.call(cmd, shell=True)
+                
+
+
 
 
     def generate_password(self, length=10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
@@ -114,7 +129,7 @@ class Cofre:
         simple password generation logic, lifted from:
         http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/models.py
         """        
-        return ''.join([choice(allowed_chars) for i in range(length)])
+        return choice('1234567890') + ''.join([choice(allowed_chars) for i in range(length-1)])
 
     
     def parse(self, args):

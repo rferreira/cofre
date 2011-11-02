@@ -15,6 +15,7 @@ DEFAULT_CONFIG = """
 store = $HOME/.cofre/cofre.db
 key = $HOME/.ssh/id_rsa
 engine = sqlite
+clipboard = pbcopy
 """
 
 def main():
@@ -26,6 +27,7 @@ def main():
     parser.add_option("-c","--config", dest="config", help="config file location", action="store", default=None)
     parser.add_option("-v","--verbose", dest="verbose", help="runs in verbose mode", action="store_true", default=False)    
     parser.add_option("-i","--init", dest="init", help="initializes the cofre password database", action="store_true", default=False)
+    parser.add_option("-q","--quick", dest="quick", help="stores the resulting password in the system copy/paste buffer", action="store_true", default=False)
     
     (options,args) = parser.parse_args()
     
@@ -38,7 +40,7 @@ def main():
     if options.verbose:
         log.setLevel(logging.DEBUG)        
                 
-    log.debug('running in debug mode')
+    log.debug('running in debug mode - version: %s' % ver)
     
     if options.config is None:
         home = os.getenv('USERPROFILE') or os.getenv('HOME')
@@ -66,7 +68,10 @@ def main():
         sys.exit(0)
           
     try:
-        cofre = core.Cofre(options.config)        
+        cofre = core.Cofre({
+            'config' : options.config,
+            'quick' : options.quick
+        })        
         cofre.parse(args)
     except errors.Error,v:
         log.debug(v)
